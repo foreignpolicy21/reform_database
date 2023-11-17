@@ -16,13 +16,15 @@ sources_with_summaries <- sources
 sources <- sources %>% mutate(`Source Type` = ifelse(`Source Type` == "Think Thank", "Think Tank", `Source Type`))
 # change sources to factor. Maybe move this to cleaning document 
 sources <- sources %>% mutate(`Source Type` = factor(`Source Type`, levels = unique(`Source Type`)))
+```
 
+```{r}
 sources %>% group_by(`Source Type`) %>%
   summarise(count = n()) %>%
   arrange(count) %>%
   mutate(`Source Type` = factor(`Source Type`, levels = unique(`Source Type`))) %>%
   ggplot(aes(x = `Source Type`, y = count)) +
-  geom_bar(stat = "identity", fill = "blue", color = "black", alpha = 0.7) +
+  geom_bar(stat = "identity", fill = "blue", color = "black") +
   coord_flip() +
   ggtitle("Where Do the Documents Come From?") +
   xlab("Source Type") +
@@ -84,10 +86,8 @@ timeline_post_2000 <- timeline %>%
   
 full_timeline <- rbind(c(Year = "< 2000", Count = pre_1999_count[1,1]), timeline_post_2000)
   
-  
-
 full_timeline %>%
-  ggplot(aes(x = factor(Year), y = Count)) +
+  ggplot(aes(x = factor(Year), y = as.integer(Count))) +
   geom_bar(stat = 'identity', fill = 'blue', color = "black") +
   labs(title = 'Number of DataFrame Rows with a Year',
        x = 'Year',

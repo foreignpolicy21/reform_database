@@ -14,9 +14,12 @@ library(httr)
 ```{r}
 sources <- read_csv("sources.csv")[-1]
 
-# select the right files
+# filter only the relevant fields
 sources <- sources %>% 
-  select(`Title`, `Item Type`, Author, `Publication Title`, `File Attachments`, Url, Date, Publisher, Type) %>%
+  select(`Title`, `Item Type`, Author, `Publication Title`, `File Attachments`, Url, Date, Publisher, Type, `Manual Tags`)
+
+# create Source Type, Document Type, and Organization or Publisher fields
+sources <- sources %>%
   mutate(`Organization or Publisher` = ifelse(`Item Type` == "magazineArticle", `Publication Title`, Publisher), # combine Publication Title and Publisher to Organization or Publisher
          `Source Type` = Type) %>% # add a Source Type based on Report Type parameter from Zotero
   # rename document types
@@ -41,8 +44,14 @@ sources <- sources %>%
          `Source Type` = ifelse(`Organization or Publisher` %in% nonprofits, "Nonprofit", `Source Type`),
          `Source Type` = ifelse(`Organization or Publisher` %in% academic, "Academic", `Source Type`),
          `Source Type` = ifelse(`Organization or Publisher` %in% magazines, "News Media",`Source Type`))
-         
+      
+
+# create Contains Recommendations field
+sources <- sources %>% 
+  mutate(`Contains Recommendations` = ifelse(grepl("rec map", `Manual Tags`), "TRUE", "FALSE")) %>%
+  select(-`Manual Tags`)
 ```
+
 
 # Extract full text from PDFs
 ```{r}
