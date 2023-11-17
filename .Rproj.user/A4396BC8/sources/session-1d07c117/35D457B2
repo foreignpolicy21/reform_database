@@ -1,0 +1,26 @@
+{
+    "id": "35D457B2",
+    "path": "~/workspace/reform_commission/reform_db_cleaning.Rmd",
+    "project_path": "reform_db_cleaning.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1698243577749.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "134,0",
+        "scrollLine": "123"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1699979068,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1700076998581,
+    "read_only": false,
+    "read_only_alternatives": []
+}

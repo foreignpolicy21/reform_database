@@ -1,0 +1,99 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-11-14"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+```{r}
+sources <- read_csv("sources_updated.csv")[-1]
+
+sources_with_summaries <- sources
+
+sources <- sources %>% mutate(`Source Type` = ifelse(`Source Type` == "Think Thank", "Think Tank", `Source Type`))
+# change sources to factor. Maybe move this to cleaning document 
+sources <- sources %>% mutate(`Source Type` = factor(`Source Type`, levels = unique(`Source Type`)))
+
+sources %>% group_by(`Source Type`) %>%
+  summarise(count = n()) %>%
+  arrange(count) %>%
+  mutate(`Source Type` = factor(`Source Type`, levels = unique(`Source Type`))) %>%
+  ggplot(aes(x = `Source Type`, y = count)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black", alpha = 0.7) +
+  coord_flip() +
+  ggtitle("Where Do the Documents Come From?") +
+  xlab("Source Type") +
+  ylab("Count")
+```
+
+```{r}
+unique(sources$`Document Type`)
+
+sources %>% group_by(`Document Type`) %>%
+  summarise(count = n()) %>%
+  arrange(count) %>%
+  mutate(`Document Type` = factor(`Document Type`, levels = unique(`Document Type`))) %>%
+  ggplot(aes(x = `Document Type`, y = count)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black") +
+  geom_text(aes(label = count), hjust = -0.2, size = 3) +
+  coord_flip() +
+  ggtitle("What Kind of Documents?") +
+  xlab("Document Type") +
+  ylab("Count")
+```
+
+```{r}
+unique(sources$`Organization or Publisher`)
+
+sources %>% group_by(`Organization or Publisher`) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  mutate(`Organization or Publisher` = factor(`Organization or Publisher`, levels = unique(`Organization or Publisher`))) %>%
+  head(10) %>%
+  ggplot(aes(x = `Organization or Publisher`, y = count)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black") +
+  geom_text(aes(label = count), hjust = -0.2, size = 3) +
+  coord_flip() +
+  ggtitle("What Kind of Documents?") +
+  xlab("Organization or Publisher") +
+  ylab("Count")
+```
+
+
+```{r}
+n_per_year <- sources %>% 
+  group_by(Date) %>%
+  summarise(count = n())
+
+timeline <- data.frame(Year = 1955:2023, Count = numeric(69))
+
+for (i in 1:nrow(n_per_year)) {
+  timeline$Count[timeline$Year == n_per_year$Date[i]] <- n_per_year$count[i]
+}
+
+pre_1999_count <- timeline %>% 
+  filter(Year <= 1999) %>%
+  summarise(sum(Count))
+
+
+timeline_post_2000 <- timeline %>%
+  filter(Year >= 2000)
+  
+full_timeline <- rbind(c(Year = "< 2000", Count = pre_1999_count[1,1]), timeline_post_2000)
+  
+  
+
+full_timeline %>%
+  ggplot(aes(x = factor(Year), y = Count)) +
+  geom_bar(stat = 'identity', fill = 'blue', color = "black") +
+  labs(title = 'Number of DataFrame Rows with a Year',
+       x = 'Year',
+       y = 'Number of Rows') +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  ggtitle("Publications per Year")
+```
+
