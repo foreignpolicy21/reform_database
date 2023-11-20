@@ -120,16 +120,20 @@ sources <- sources %>%
           `Organization or Publisher` = `Organization-or-Publisher`,
           `Source Type` = `Source-Type`,
           `Summary (from GPT)` = answer,
+          `Contains Recommendations` = `Contains-Recommendations`,
           URL = Url)
 
 # remove bad GPT summary columns
 sources <- sources %>% 
   mutate(`Summary (from GPT)` = ifelse(str_detect(`Summary (from GPT)`, "Discusses the document, which is titled"), "", `Summary (from GPT)`)) %>%
-  mutate(`Summary (from GPT)` = ifelse(str_detect(`Summary (from GPT)`, "NA"), "", `Summary (from GPT)`)) 
-
-sources %>% filter(`Summary (from GPT)` == "NA")
-
+  mutate(`Summary (from GPT)` = ifelse(str_detect(`Summary (from GPT)`, "NA"), "", `Summary (from GPT)`)) %>%
+  mutate(`Summary (from GPT)` = ifelse(is.na(`Summary (from GPT)`), "", `Summary (from GPT)`))
 ```
+
+```{r}
+colnames(sources)
+```
+
 
 
 # Write CSV for upload to Notion
@@ -141,16 +145,4 @@ sources %>% filter(`Summary (from GPT)` == "NA")
 # remove unnecessary columns
 
 write_csv(sources, "sources_updated.csv")
-```
-
-
-# --------------- SCRATCH --------------------
-## select a small number of reports for testing
-```{r}
-selection <- c("Less Art, More Science: Transforming U.S. Foreign Policy through Evidence, Integrity, and Innovation", "Listening Report For the U.S. Department of State & USAID", "Diplomats and Diplomacy for the 21st Century")
-
-# choose weird sources
-selected_sources <- sources %>% filter(Title %in% selection)
-
-write_csv(selected_sources, "pilot.csv")
 ```
