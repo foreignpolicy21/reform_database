@@ -44,11 +44,10 @@ sources <- sources %>%
          `Source Type` = ifelse(`Organization or Publisher` %in% nonprofits, "Nonprofit", `Source Type`),
          `Source Type` = ifelse(`Organization or Publisher` %in% academic, "Academic", `Source Type`),
          `Source Type` = ifelse(`Organization or Publisher` %in% magazines, "News Media",`Source Type`))
-      
 
 # create Contains Recommendations field
 sources <- sources %>% 
-  mutate(`Contains Recommendations` = ifelse(grepl("rec map", `Manual Tags`), "TRUE", "FALSE")) %>%
+  mutate(`Contains Recommendations` = ifelse(grepl("rec map", `Manual Tags`), "TRUE", "FALSE")) %>% 
   select(-`Manual Tags`)
 ```
 
@@ -135,7 +134,6 @@ colnames(sources)
 ```
 
 
-
 # Write CSV for upload to Notion
 ```{r}
 # TODO:
@@ -145,4 +143,37 @@ colnames(sources)
 # remove unnecessary columns
 
 write_csv(sources, "sources_updated.csv")
+```
+
+
+
+
+# SCRATCH
+
+Used to create the tag system for the tag MVP:
+```{r}
+# # format the tag strings to be automatically converted to multiselect in Notion
+# notion_format <- function(tag_string){
+#   # split by semicolon
+#   tags <- strsplit(tag_string, "; ")[[1]]
+#     
+#   # Remove unecessary tags
+#   tags <- tags[!(tags %in% c("tag mvp", "rec map"))]
+#   
+#   # Capitalize the first letter of each word
+#   tags <- tools::toTitleCase(tags)
+#   
+#   # Combine the tags into a comma-separated string
+#   cleaned_tags <- paste(tags, collapse = ", ")
+#   
+#   return(cleaned_tags)
+# }
+# 
+# # create tags
+# tag_mvp <- sources %>%
+#   filter(grepl("tag mvp", `Manual Tags`))
+# 
+# tag_mvp$`Manual Tags` <- sapply(tag_mvp$`Manual Tags`, notion_format)
+# 
+# write_csv2(tag_mvp, "tag_mvp.csv") # use write_csv2 (uses delimiter ";" instead of ",") to avoid CSV confusion
 ```
