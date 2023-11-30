@@ -103,7 +103,7 @@ for (i in 1:nrow(sources)) {
 First, manually upload CSV to Relevance to summarize (might be worth doing this thru the API eventually).
 ```{r}
 write_csv(sources, "sources_without_summaries.csv")
-```
+``` 
 
 
 # Clean summarized DF
